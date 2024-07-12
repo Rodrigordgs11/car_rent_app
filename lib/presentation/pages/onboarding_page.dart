@@ -43,7 +43,7 @@ class OnboardingPage extends StatelessWidget {
                       onPressed: () {  }, 
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,
-                        backgroundColor: Colors.white
+                        backgroundColor: Colors.grey[200],
                       ),
                       child: Text(
                         'Let\'s Go',
