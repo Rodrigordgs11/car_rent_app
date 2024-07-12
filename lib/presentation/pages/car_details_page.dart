@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/models/Car.dart';
+import 'package:namer_app/presentation/pages/maps_details_page.dart';
 import 'package:namer_app/presentation/widgets/car_card.dart';
 
 class CarDetailsPage extends StatelessWidget{
@@ -56,21 +57,26 @@ class CarDetailsPage extends StatelessWidget{
                 ),
                 SizedBox(width: 20),
                 Expanded(
-                  child: Container(
-                    height: 170,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        image: AssetImage('assets/maps.png'),
-                        fit: BoxFit.cover
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MapsDetailsPage(car: car)));
+                    },
+                    child: Container(
+                      height: 170,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                          image: AssetImage('assets/maps.png'),
+                          fit: BoxFit.cover
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          )
+                        ]
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          spreadRadius: 5,
-                        )
-                      ]
                     ),
                   ),
                 ) 
