@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "70411954798",
+    "project_id": "rentcarapp-a2b88",
+    "storage_bucket": "rentcarapp-a2b88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70411954798:android:52c262ba7e810e4518947f",
+        "android_client_info": {
+          "package_name": "com.example.carRentApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFxS11A87HkYUixqFZF8Bw7QU33rlJUYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70411954798:android:66852864f271573a18947f",
+        "android_client_info": {
+          "package_name": "com.example.car_rent_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFxS11A87HkYUixqFZF8Bw7QU33rlJUYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70411954798:android:f1f229b74afeda4718947f",
+        "android_client_info": {
+          "package_name": "com.example.rentCarApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFxS11A87HkYUixqFZF8Bw7QU33rlJUYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
