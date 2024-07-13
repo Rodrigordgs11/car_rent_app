@@ -1,6 +1,6 @@
 # car_rent_app
 
-A new Flutter project.
+A Flutter project that aims to allow users to choose a car they want to rent and find out where it is located. After that, the user can proceed to rent it.
 
 ## Getting Started
 
