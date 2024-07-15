@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/presentation/pages/car_list_screen.dart';
+import 'package:namer_app/presentation/pages/auth/login_page.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class OnboardingPage extends StatelessWidget {
                     height: 54,
                     child: ElevatedButton(
                       onPressed: () { 
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CarListScreen()));
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
                       }, 
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,

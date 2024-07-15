@@ -20,5 +20,6 @@ samples, guidance on mobile development, and a full API reference.
 - Login Otp
 - Users type - client and seller
 - Rent a car (Locale where car is sell) with localization
-- Biometric Authentication || Fingerprint Flutter (fingerprint and face authentication)
+- Auth page
 - ao clicar no ponto onde esta o carro redirecionar para os mapas do iphone. 
+- upload photos

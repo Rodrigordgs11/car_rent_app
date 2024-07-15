@@ -8,6 +8,7 @@ import 'package:namer_app/presentation/pages/onboarding_page.dart';
 import 'firebase_options.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +16,68 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   initInjection();
+  // createCarsInFirebase();
+  // createUserFirebase();
   runApp(const MyApp());
 }
+
+// void createUserFirebase() {
+//   // Code to create user in Firebase
+//   FirebaseFirestore db = FirebaseFirestore.instance;
+
+//   final users = [
+//     {
+//       'name': 'Rodrigo',
+//       'username': 'rodrigo',
+//       'password': 'rodrigo',
+//     },
+//   ];
+
+//   users.forEach((user) {
+//     db.collection('users').add(user);
+//   });
+// }
+// void createCarsInFirebase(){
+//   // Code to create cars in Firebase
+//   FirebaseFirestore db = FirebaseFirestore.instance;
+
+//   final cars = [
+//     {
+//       'model': 'Toyota Corolla',
+//       'distance': 1000.0,
+//       'fuelCapacity': 50.0,
+//       'pricePerHour': 10.0
+//     },
+//     {
+//       'model': 'Honda Civic',
+//       'distance': 1200.0,
+//       'fuelCapacity': 60.0,
+//       'pricePerHour': 12.0
+//     },
+//     {
+//       'model': 'Hyundai Elantra',
+//       'distance': 1100.0,
+//       'fuelCapacity': 55.0,
+//       'pricePerHour': 11.0
+//     },
+//     {
+//       'model': 'Ford Focus',
+//       'distance': 1300.0,
+//       'fuelCapacity': 65.0,
+//       'pricePerHour': 13.0
+//     },
+//     {
+//       'model': 'Chevrolet Cruze',
+//       'distance': 1400.0,
+//       'fuelCapacity': 70.0,
+//       'pricePerHour': 14.0
+//     }
+//   ];
+
+//   cars.forEach((car) {
+//     db.collection('cars').add(car);
+//   }); 
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,10 +89,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 255, 255)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 255, 255, 255),
+            primary: Colors.blueAccent,
+          ),
           useMaterial3: true,
         ),
-        home: AuthenticationPage(),
+        home: OnboardingPage(),
       ),
     );
   }
@@ -95,15 +159,3 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     );
   }
 }
-
-// class OnboardingPage extends StatelessWidget {
-//   const OnboardingPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Onboarding Page')),
-//       body: Center(child: const Text('Welcome to the Onboarding Page')),
-//     );
-//   }
-// }
