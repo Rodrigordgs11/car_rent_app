@@ -45,8 +45,8 @@ class OnboardingPage extends StatelessWidget {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
                       }, 
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.grey[200],
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blueAccent,
                       ),
                       child: Text(
                         'Let\'s Go',

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/services/firebase_auth_service.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
             image: DecorationImage(
               image: AssetImage('assets/onboarding.png'),
               fit: BoxFit.cover,
-              opacity: 0.08,
+              opacity: 0.06,
             ),
           ),
           padding: const EdgeInsets.all(16),
@@ -34,17 +35,27 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Welcome back!',
+                Text(
+                  'Sign In',
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 20),
+                Text(
+                  'Sign up now and enjoy rental ease like never before.',
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                SizedBox(height: 35),
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Username',
                     border: OutlineInputBorder(),
                   ),
@@ -55,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscureText,
@@ -83,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() == true) {
@@ -111,8 +122,37 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 40),
+                    backgroundColor: Colors.blueAccent,
                   ),
-                  child: const Text('Login'),
+                  child: Text(
+                    'Sign In', 
+                    style: TextStyle(
+                      color: Colors.white, 
+                      fontWeight: FontWeight.w600, 
+                      fontSize: 14
+                    )
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: const Divider(
+                        color: Colors.black26,
+                        height: 36,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text('Or sign in with'),
+                    ),
+                    Expanded(
+                      child: const Divider(
+                        color: Colors.black26,
+                        height: 36,
+                      ),
+                    ),
+                  ]
                 ),
                 SizedBox(height: 20),
                 Row(
@@ -140,32 +180,34 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: const Divider(
-                        color: Colors.black,
-                        height: 36,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('OR'),
-                    ),
-                    Expanded(
-                      child: const Divider(
-                        color: Colors.black,
-                        height: 36,
-                      ),
-                    ),
-                  ]
-                ),
-                OutlinedButton(
+                SizedBox(height: 16),
+                TextButton(
                   onPressed: () {
-                    //Navigator.of(context).pushNamed('/register');
-                  }, 
-                  child: const Text('Create an account'),
-                  )
+                    // Navigator.pushNamed(context, '/register');
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Do you have an account? ',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        TextSpan(
+                          text: 'Register here',
+                          style: TextStyle(
+                            color: Colors.blueAccent,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              // Handle the click event for "Register here"
+                              //Navigator.pushNamed(context, '/register');
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
