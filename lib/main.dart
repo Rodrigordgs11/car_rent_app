@@ -19,26 +19,9 @@ void main() async {
   );
   initInjection();
   // createCarsInFirebase();
-  // createUserFirebase();
   runApp(const MyApp());
 }
 
-// void createUserFirebase() {
-//   // Code to create user in Firebase
-//   FirebaseFirestore db = FirebaseFirestore.instance;
-
-//   final users = [
-//     {
-//       'name': 'Rodrigo',
-//       'username': 'rodrigo',
-//       'password': 'rodrigo',
-//     },
-//   ];
-
-//   users.forEach((user) {
-//     db.collection('users').add(user);
-//   });
-// }
 // void createCarsInFirebase(){
 //   // Code to create cars in Firebase
 //   FirebaseFirestore db = FirebaseFirestore.instance;

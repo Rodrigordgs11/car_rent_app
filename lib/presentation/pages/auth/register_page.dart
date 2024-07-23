@@ -1,20 +1,25 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/services/firebase_auth_service.dart';
-import 'package:namer_app/presentation/pages/auth/register_page.dart';
+import 'package:namer_app/presentation/pages/auth/login_page.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
+//import 'package:namer_app/presentation/pages/auth/otp_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
+  bool _isChecked = false;
+  bool isLoading = false;
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
 
@@ -37,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Sign In',
+                  'Sign Up',
                   style: TextStyle(
                     color: Colors.blueAccent,
                     fontSize: 22,
@@ -46,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Sign in now and enjoy rental ease like never before.',
+                  'Sign up now and enjoy rental ease like never before.',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -54,6 +59,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 35),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Name is required';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -63,6 +82,23 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Username is required';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _phoneNumberController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Phone Number is required';
+                    }
+                    if (value.length != 9) {
+                      return 'Phone Number must have 9 numbers';
                     }
                     return null;
                   },
@@ -95,28 +131,52 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
-                ElevatedButton(
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _isChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isChecked = value!;
+                        });
+                      },
+                    ),
+                    Text('I agree to the terms and conditions'),
+                  ],
+                ),
+                SizedBox(height: 10),
+                isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() == true) {
+                      String name = _nameController.text;
                       String username = _usernameController.text;
                       String password = _passwordController.text;
+                      String phoneNumber = _phoneNumberController.text;
 
-                      if (username.isNotEmpty && password.isNotEmpty) {
-                        bool userExists = await _authService.login(username, password);
+                      if (username.isNotEmpty && password.isNotEmpty && name.isNotEmpty && phoneNumber.isNotEmpty && _isChecked) {
+                        bool userExists = await _authService.userExists(username);
                         if (userExists) {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => CarListScreen()),
-                            (Route<dynamic> route) => false,
-                          );
-                        } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Invalid username or password'),
+                              content: Text('User already exists'),
                               backgroundColor: Colors.red,
                             ),
                           );
+                        } else {
+
+                          var user = await _authService.createUser(name, username, phoneNumber, password);
+                          print(user);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('User created successfully'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CarListScreen()), (route) => false);
                         }
                       }
                     }
@@ -126,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     backgroundColor: Colors.blueAccent,
                   ),
                   child: Text(
-                    'Sign In', 
+                    'Sign Up', 
                     style: TextStyle(
                       color: Colors.white, 
                       fontWeight: FontWeight.w600, 
@@ -190,18 +250,18 @@ class _LoginPageState extends State<LoginPage> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'Do you have an account? ',
+                          text: 'Already have account? ',
                           style: TextStyle(color: Colors.black),
                         ),
                         TextSpan(
-                          text: 'Register here',
+                          text: 'Sign In',
                           style: TextStyle(
                             color: Colors.blueAccent,
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
                             },
                         ),
                       ],
