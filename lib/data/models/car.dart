@@ -3,15 +3,17 @@ class Car{
   final double distance;
   final double fuelCapacity;
   final double pricePerHour;
+  final String seller;
 
-  Car({required this.model, required this.distance, required this.fuelCapacity, required this.pricePerHour});
+  Car({required this.model, required this.distance, required this.fuelCapacity, required this.pricePerHour, required this.seller});
 
   factory Car.fromDocument(doc){
     return Car(
       model: doc['model'],
       distance: doc['distance'],
       fuelCapacity: doc['fuelCapacity'],
-      pricePerHour: doc['pricePerHour']
+      pricePerHour: doc['pricePerHour'],
+      seller: doc['seller'],
     );
   }
 }

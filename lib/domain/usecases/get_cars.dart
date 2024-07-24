@@ -9,4 +9,8 @@ class GetCars {
   Future<List<Car>> call() async {
     return await repository.fetchCars();
   }
+
+  Future<List<Car>> callBySeller(String username) async {
+    return await repository.fetchCarBySeller(username);
+  }
 }

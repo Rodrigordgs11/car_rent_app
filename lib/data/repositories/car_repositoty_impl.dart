@@ -11,4 +11,9 @@ class CarRepositoryImpl implements CarRepository {
   Future<List<Car>> fetchCars() {
     return dataSouce.getCars();
   } 
+
+  @override
+  Future<List<Car>> fetchCarBySeller(String username) {
+    return dataSouce.getCarsBySeller(username);
+  }
 }

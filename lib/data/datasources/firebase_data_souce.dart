@@ -10,4 +10,9 @@ class FirebaseDataSouce{
     final cars = await firestore.collection('cars').get();
     return cars.docs.map((doc) => Car.fromDocument(doc)).toList();
   }
+
+  Future<List<Car>> getCarsBySeller(String username) async {
+    final cars = await firestore.collection('cars').where('seller', isEqualTo: username).get();
+    return cars.docs.map((doc) => Car.fromDocument(doc)).toList();
+  }
 } 

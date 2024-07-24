@@ -3,11 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseAuthService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<Map<String, dynamic>> createUser(String name, String username, String phoneNumber, String password) async {
+  Future<Map<String, dynamic>> createUser(String name, String username, String phoneNumber, String typeOfUser, String password) async {
     final user = {
       'name': name,
       'username': username,
       'phoneNumber': phoneNumber,
+      'typeOfUser': typeOfUser,
       'password': password,
     };
 
@@ -22,7 +23,7 @@ class FirebaseAuthService {
     return doc.data() as Map<String, dynamic>;
   }
 
-  Future<bool> login(String username, String password) async {
+  Future<Map<String, dynamic>> login(String username, String password) async {
     final user = await _firebaseFirestore
         .collection('users')
         .where('username', isEqualTo: username)
@@ -30,9 +31,10 @@ class FirebaseAuthService {
         .get();
 
     if (user.docs.isEmpty) {
-      return false;
+      throw Exception('User not found');
     }
-    return true;
+
+    return user.docs.first.data();
   }
 
   Future<bool> userExists(String username) async {

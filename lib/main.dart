@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/injection_container.dart';
 import 'package:namer_app/presentation/bloc/car_bloc.dart';
 import 'package:namer_app/presentation/bloc/car_event.dart';
+import 'package:namer_app/presentation/pages/car_list_screen.dart';
 import 'package:namer_app/presentation/pages/onboarding_page.dart';
 import 'firebase_options.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -18,51 +19,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   initInjection();
-  // createCarsInFirebase();
   runApp(const MyApp());
 }
-
-// void createCarsInFirebase(){
-//   // Code to create cars in Firebase
-//   FirebaseFirestore db = FirebaseFirestore.instance;
-
-//   final cars = [
-//     {
-//       'model': 'Toyota Corolla',
-//       'distance': 1000.0,
-//       'fuelCapacity': 50.0,
-//       'pricePerHour': 10.0
-//     },
-//     {
-//       'model': 'Honda Civic',
-//       'distance': 1200.0,
-//       'fuelCapacity': 60.0,
-//       'pricePerHour': 12.0
-//     },
-//     {
-//       'model': 'Hyundai Elantra',
-//       'distance': 1100.0,
-//       'fuelCapacity': 55.0,
-//       'pricePerHour': 11.0
-//     },
-//     {
-//       'model': 'Ford Focus',
-//       'distance': 1300.0,
-//       'fuelCapacity': 65.0,
-//       'pricePerHour': 13.0
-//     },
-//     {
-//       'model': 'Chevrolet Cruze',
-//       'distance': 1400.0,
-//       'fuelCapacity': 70.0,
-//       'pricePerHour': 14.0
-//     }
-//   ];
-
-//   cars.forEach((car) {
-//     db.collection('cars').add(car);
-//   }); 
-// }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -72,6 +30,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final Prefs _prefs = Prefs();
 
   @override
   void initState() {
@@ -86,20 +45,54 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<CarBloc>()..add(LoadCars()),
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 255, 255, 255),
-            primary: Colors.blueAccent,
-          ),
-          useMaterial3: true,
-        ),
-        home: OnboardingPage(),
-      ),
+    return FutureBuilder<List<String?>>(
+      future: _loadUserData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error loading user data'));
+        } else {
+          final userData = snapshot.data;
+          final typeOfUser = userData?[0];
+          final username = userData?[1];
+
+          return BlocProvider(
+            create: (context) => getIt<CarBloc>()
+              ..add(LoadCars(userType: typeOfUser ?? '', username: username ?? '')),
+            child: FutureBuilder<String?>(
+              future: _prefs.getSharedPref('isLogged'),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading preferences'));
+                } else {
+                  final bool isLogged = snapshot.data == 'true';
+                  return MaterialApp(
+                    title: 'Flutter Demo',
+                    theme: ThemeData(
+                      colorScheme: ColorScheme.fromSeed(
+                        seedColor: const Color.fromARGB(255, 255, 255, 255),
+                        primary: Colors.blueAccent,
+                      ),
+                      useMaterial3: true,
+                    ),
+                    home: isLogged ? CarListScreen() : OnboardingPage(),
+                  );
+                }
+              },
+            ),
+          );
+        }
+      },
     );
+  }
+
+  Future<List<String?>> _loadUserData() async {
+    final typeOfUser = await _prefs.getSharedPref('typeOfUser');
+    final username = await _prefs.getSharedPref('username');
+    return [typeOfUser, username];
   }
 }
 
