@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/services/firebase_auth_service.dart';
+import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/presentation/pages/auth/register_page.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
 
@@ -17,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
+  final Prefs _prefs = Prefs();
 
   @override
   Widget build(BuildContext context) {
@@ -103,12 +105,15 @@ class _LoginPageState extends State<LoginPage> {
                       String password = _passwordController.text;
 
                       if (username.isNotEmpty && password.isNotEmpty) {
-                        bool userExists = await _authService.login(username, password);
-                        if (userExists) {
+                        var userLogged = await _authService.login(username, password);
+                        if (userLogged.isNotEmpty) {
+                          await _prefs.setSharedPref('isLogged', true.toString());
+                          await _prefs.setSharedPref('typeOfUser', userLogged['typeOfUser']);
+                          await _prefs.setSharedPref('username', userLogged['username']);
                           Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => CarListScreen()),
-                            (Route<dynamic> route) => false,
+                             context,
+                             MaterialPageRoute(builder: (context) => CarListScreen()),
+                             (Route<dynamic> route) => false,
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

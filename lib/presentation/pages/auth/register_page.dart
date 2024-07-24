@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/services/firebase_auth_service.dart';
+import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/presentation/pages/auth/login_page.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
 //import 'package:namer_app/presentation/pages/auth/otp_page.dart';
@@ -19,256 +20,283 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  String _typeOfUser = '';
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
+  final Prefs _prefs = Prefs();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/onboarding.png'),
-              fit: BoxFit.cover,
-              opacity: 0.06,
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/onboarding.png'),
+                fit: BoxFit.cover,
+                opacity: 0.06,
+              ),
             ),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Sign up now and enjoy rental ease like never before.',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                  SizedBox(height: 20),
+                  Text(
+                    'Sign up now and enjoy rental ease like never before.',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                ),
-                SizedBox(height: 35),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 35),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Name is required';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Name is required';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Username is required';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Username is required';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _phoneNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _phoneNumberController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Phone Number is required';
+                      }
+                      if (value.length != 9) {
+                        return 'Phone Number must have 9 numbers';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Phone Number is required';
-                    }
-                    if (value.length != 9) {
-                      return 'Phone Number must have 9 numbers';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                  SizedBox(height: 20),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Type of User',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'user',
+                        child: Text('User'),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
+                      DropdownMenuItem(
+                        value: 'seller',
+                        child: Text('Seller'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _typeOfUser = value!;
+                      });
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-                    if (value.length < 4) {
-                      return 'Password must be at least 4 characters';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked = value!;
-                        });
-                      },
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
                     ),
-                    Text('I agree to the terms and conditions'),
-                  ],
-                ),
-                SizedBox(height: 10),
-                isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() == true) {
-                      String name = _nameController.text;
-                      String username = _usernameController.text;
-                      String password = _passwordController.text;
-                      String phoneNumber = _phoneNumberController.text;
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password is required';
+                      }
+                      if (value.length < 4) {
+                        return 'Password must be at least 4 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked = value!;
+                          });
+                        },
+                      ),
+                      Text('I agree to the terms and conditions'),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        String name = _nameController.text;
+                        String username = _usernameController.text;
+                        String password = _passwordController.text;
+                        String phoneNumber = _phoneNumberController.text;
 
-                      if (username.isNotEmpty && password.isNotEmpty && name.isNotEmpty && phoneNumber.isNotEmpty && _isChecked) {
-                        bool userExists = await _authService.userExists(username);
-                        if (userExists) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('User already exists'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else {
-
-                          var user = await _authService.createUser(name, username, phoneNumber, password);
-                          print(user);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('User created successfully'),
-                              backgroundColor: Colors.green,
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CarListScreen()), (route) => false);
+                        if (username.isNotEmpty && password.isNotEmpty && name.isNotEmpty && phoneNumber.isNotEmpty && _typeOfUser.isNotEmpty &&_isChecked) {
+                          bool userExists = await _authService.userExists(username);
+                          if (userExists) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('User already exists'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            var userLogged = await _authService.createUser(name, username, phoneNumber, _typeOfUser, password);
+                            await _prefs.setSharedPref('isLogged', true.toString());
+                            await _prefs.setSharedPref('typeOfUser', userLogged['typeOfUser']);
+                            await _prefs.setSharedPref('username', userLogged['username']);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('User created successfully'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CarListScreen()), (route) => false);
+                          }
                         }
                       }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 40),
-                    backgroundColor: Colors.blueAccent,
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 40),
+                      backgroundColor: Colors.blueAccent,
+                    ),
+                    child: Text(
+                      'Sign Up', 
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontWeight: FontWeight.w600, 
+                        fontSize: 14
+                      )
+                    ),
                   ),
-                  child: Text(
-                    'Sign Up', 
-                    style: TextStyle(
-                      color: Colors.white, 
-                      fontWeight: FontWeight.w600, 
-                      fontSize: 14
-                    )
-                  ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: const Divider(
-                        color: Colors.black26,
-                        height: 36,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('Or sign in with'),
-                    ),
-                    Expanded(
-                      child: const Divider(
-                        color: Colors.black26,
-                        height: 36,
-                      ),
-                    ),
-                  ]
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton.outlined(
-                      onPressed: (){}, 
-                      icon: Icon(Icons.facebook),
-                      color: Colors.blueAccent,
-                      padding: EdgeInsets.all(10),
-                    ),
-                    SizedBox(width: 10),
-                    IconButton.outlined(
-                      onPressed: (){}, 
-                      icon: Icon(Icons.apple),
-                      color: Colors.black,
-                      padding: EdgeInsets.all(10),
-                    ),
-                    SizedBox(width: 10),
-                    IconButton.outlined(
-                      onPressed: (){}, 
-                      icon: Icon(Icons.email),
-                      color: Colors.red,
-                      padding: EdgeInsets.all(10),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    // Navigator.pushNamed(context, '/register');
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Already have account? ',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        TextSpan(
-                          text: 'Sign In',
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            decoration: TextDecoration.underline,
+                  SizedBox(height: 20),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: const Divider(
+                  //         color: Colors.black26,
+                  //         height: 36,
+                  //       ),
+                  //     ),
+                  //     const Padding(
+                  //       padding: EdgeInsets.symmetric(horizontal: 8),
+                  //       child: Text('Or sign in with'),
+                  //     ),
+                  //     Expanded(
+                  //       child: const Divider(
+                  //         color: Colors.black26,
+                  //         height: 36,
+                  //       ),
+                  //     ),
+                  //   ]
+                  // ),
+                  // SizedBox(height: 16),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     IconButton.outlined(
+                  //       onPressed: (){}, 
+                  //       icon: Icon(Icons.facebook),
+                  //       color: Colors.blueAccent,
+                  //       padding: EdgeInsets.all(10),
+                  //     ),
+                  //     SizedBox(width: 10),
+                  //     IconButton.outlined(
+                  //       onPressed: (){}, 
+                  //       icon: Icon(Icons.apple),
+                  //       color: Colors.black,
+                  //       padding: EdgeInsets.all(10),
+                  //     ),
+                  //     SizedBox(width: 10),
+                  //     IconButton.outlined(
+                  //       onPressed: (){}, 
+                  //       icon: Icon(Icons.email),
+                  //       color: Colors.red,
+                  //       padding: EdgeInsets.all(10),
+                  //     ),
+                  //   ],
+                  // ),
+                  //SizedBox(height: 14),
+                  TextButton(
+                    onPressed: () {
+                      // Navigator.pushNamed(context, '/register');
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Already have account? ',
+                            style: TextStyle(color: Colors.black),
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                            },
-                        ),
-                      ],
+                          TextSpan(
+                            text: 'Sign In',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                              },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
