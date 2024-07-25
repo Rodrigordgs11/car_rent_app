@@ -1,12 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/models/Car.dart';
+import 'package:namer_app/data/sharedPreferences/prefs.dart';
+import 'package:namer_app/presentation/items/bottomNavigationBarItemsSeller.dart';
+import 'package:namer_app/presentation/items/bottomNavigationBarItemsUser.dart';
 import 'package:namer_app/presentation/pages/maps_details_page.dart';
 import 'package:namer_app/presentation/widgets/car_card.dart';
 
-class CarDetailsPage extends StatelessWidget{
+class CarDetailsPage extends StatefulWidget {
   final Car car;
 
-  const CarDetailsPage({Key? key, required this.car});
+  const CarDetailsPage({Key? key, required this.car}) : super(key: key);
+
+  @override
+  _CarDetailsPageState createState() => _CarDetailsPageState();
+}
+
+class _CarDetailsPageState extends State<CarDetailsPage> {
+  final Prefs _prefs = Prefs();
+  int _selectedIndex = 0;
+  String? _typeOfUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    String? typeOfUser = await _prefs.getSharedPref('typeOfUser');
+    setState(() {
+      _typeOfUser = typeOfUser;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (_typeOfUser == 'user') {
+      onItemTappedUser(index);
+    } else {
+      onItemTappedSeller(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +59,15 @@ class CarDetailsPage extends StatelessWidget{
       ),
       body: Column(
         children: [
-          CarCard(car: Car(model: car.model, distance: car.distance, fuelCapacity: car.fuelCapacity, pricePerHour: car.pricePerHour, seller: car.seller)),
+          CarCard(
+            car: Car(
+              model: widget.car.model,
+              distance: widget.car.distance,
+              fuelCapacity: widget.car.fuelCapacity,
+              pricePerHour: widget.car.pricePerHour,
+              seller: widget.car.seller
+            ),
+          ),
           SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -59,7 +104,7 @@ class CarDetailsPage extends StatelessWidget{
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MapsDetailsPage(car: car)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MapsDetailsPage(car: widget.car)));
                     },
                     child: Container(
                       height: 170,
@@ -97,7 +142,19 @@ class CarDetailsPage extends StatelessWidget{
           // )
         ],
       ),
+      bottomNavigationBar: _typeOfUser == null
+        ? Center(child: CircularProgressIndicator())
+        : BottomNavigationBar(
+            items: [
+              if (_typeOfUser == 'user')
+                ...bottomNavigationBarItemsUser
+              else
+                ...bottomNavigationBarItemsSeller
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.blueAccent,
+            onTap: _onItemTapped,
+          ),
     );
   }
-  
 }
