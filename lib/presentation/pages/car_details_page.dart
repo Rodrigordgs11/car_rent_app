@@ -24,6 +24,11 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   void initState() {
     super.initState();
     _loadUserType();
+    if (_typeOfUser == 'user') {
+      _selectedIndex = getSelectedIndexUser();
+    } else {
+      _selectedIndex = getSelectedIndexSeller();
+    }
   }
 
   Future<void> _loadUserType() async {
@@ -34,10 +39,6 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
     if (_typeOfUser == 'user') {
       onItemTappedUser(context, index);
     } else {

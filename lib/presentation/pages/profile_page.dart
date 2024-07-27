@@ -1,14 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/data/sharedPreferences/prefs.dart';
+import 'package:namer_app/presentation/items/bottomNavigationBarItemsSeller.dart';
+import 'package:namer_app/presentation/items/bottomNavigationBarItemsUser.dart';
 import 'package:namer_app/presentation/pages/auth/login_page.dart';
 import 'package:namer_app/presentation/widgets/button_profile.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+class _ProfilePageState extends State<ProfilePage> {
+  final Prefs _prefs = Prefs();
+  int _selectedIndex = 0;
+  String? _typeOfUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+    if (_typeOfUser == 'user') {
+      _selectedIndex = getSelectedIndexUser();
+    } else {
+      _selectedIndex = getSelectedIndexSeller();
+    }
+  }
+
+  Future<void> _loadUserType() async {
+    String? typeOfUser = await _prefs.getSharedPref('typeOfUser');
+    setState(() {
+      _typeOfUser = typeOfUser;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    if (_typeOfUser == 'user') {
+      onItemTappedUser(context, index);
+    } else {
+      onItemTappedSeller(context, index);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Prefs _prefs = Prefs();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -92,6 +127,19 @@ class ProfilePage extends StatelessWidget {
           }
         },
       ),
+      bottomNavigationBar: _typeOfUser == null
+        ? Center(child: CircularProgressIndicator())
+        : BottomNavigationBar(
+            items: [
+              if (_typeOfUser == 'user')
+                ...bottomNavigationBarItemsUser
+              else
+                ...bottomNavigationBarItemsSeller
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.blueAccent,
+            onTap: _onItemTapped,
+          ),
     );
   }
 }

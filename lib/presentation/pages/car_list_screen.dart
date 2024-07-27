@@ -17,13 +17,18 @@ class CarListScreen extends StatefulWidget {
 
 class _CarListScreenState extends State<CarListScreen> {
   final Prefs _prefs = Prefs();
-  int _selectedIndex = 0;
+  int _selectedIndex = getSelectedIndexUser();
   String? _typeOfUser;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    if (_typeOfUser == 'user') {
+      _selectedIndex = getSelectedIndexUser();
+    } else {
+      _selectedIndex = getSelectedIndexSeller();
+    }
   }
 
   Future<void> _loadUserData() async {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/presentation/pages/car_list_screen.dart';
 import 'package:namer_app/presentation/pages/profile_page.dart';
+
+  int _selectedIndexSeller = 0;
 
   var bottomNavigationBarItemsSeller = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
@@ -18,12 +21,17 @@ import 'package:namer_app/presentation/pages/profile_page.dart';
 
   void onItemTappedSeller(BuildContext context, int index) {
     if (index == 0) {
-      // Ação para o item 0 do BottomNavigationBar (Home)
-      print('Home');
+      _selectedIndexSeller = index;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CarListScreen()));
     } else if (index == 1) {
       // Ação para o item 1 do BottomNavigationBar (Business)
       print('Business');
     } else if (index == 2) {
+      _selectedIndexSeller = index;
       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
     }
+  }
+
+  int getSelectedIndexSeller() {
+    return _selectedIndexSeller;
   }
