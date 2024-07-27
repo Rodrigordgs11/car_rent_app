@@ -43,9 +43,9 @@ class _CarListScreenState extends State<CarListScreen> {
     });
 
     if (_typeOfUser == 'user') {
-      onItemTappedUser(index);
+      onItemTappedUser(context, index);
     } else {
-      onItemTappedSeller(index);
+      onItemTappedSeller(context, index);
     }
   }
 

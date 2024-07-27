@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/presentation/pages/profile_page.dart';
 
   var bottomNavigationBarItemsSeller = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
@@ -15,7 +16,7 @@ import 'package:flutter/material.dart';
     ),
   ];
 
-  void onItemTappedSeller(int index) {
+  void onItemTappedSeller(BuildContext context, int index) {
     if (index == 0) {
       // Ação para o item 0 do BottomNavigationBar (Home)
       print('Home');
@@ -23,7 +24,6 @@ import 'package:flutter/material.dart';
       // Ação para o item 1 do BottomNavigationBar (Business)
       print('Business');
     } else if (index == 2) {
-      // Ação para o item 2 do BottomNavigationBar (Profile)
-      print('Profile');
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
     }
   }

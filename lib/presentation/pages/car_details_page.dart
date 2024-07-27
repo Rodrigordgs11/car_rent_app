@@ -39,9 +39,9 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     });
 
     if (_typeOfUser == 'user') {
-      onItemTappedUser(index);
+      onItemTappedUser(context, index);
     } else {
-      onItemTappedSeller(index);
+      onItemTappedSeller(context, index);
     }
   }
 
