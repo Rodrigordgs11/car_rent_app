@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/injection_container.dart';
 import 'package:namer_app/presentation/bloc/car_bloc.dart';
-import 'package:namer_app/presentation/bloc/car_event.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
 import 'package:namer_app/presentation/pages/onboarding_page.dart';
+import 'package:namer_app/presentation/pages/auth/login_page.dart';
 import 'firebase_options.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -45,31 +45,37 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String?>>(
-      future: _loadUserData(),
+    return FutureBuilder<String?>(
+      future: _prefs.getSharedPref('isLogged'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return const Center(child: Text('Error loading user data'));
+          return const Center(child: Text('Error loading preferences'));
         } else {
-          final userData = snapshot.data;
-          final typeOfUser = userData?[0];
-          final username = userData?[1];
+          final bool isLogged = snapshot.data == 'true';
+          return FutureBuilder<String?>(
+            future: _prefs.getSharedPref('isFirstTime'),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error loading preferences'));
+              } else {
+                final bool isFirstTime = snapshot.data == 'true' || snapshot.data == null;
 
-          return BlocProvider(
-            create: (context) => getIt<CarBloc>()
-              ..add(LoadCars(userType: typeOfUser ?? '', username: username ?? '')),
-            child: FutureBuilder<String?>(
-              future: _prefs.getSharedPref('isLogged'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading preferences'));
+                Widget homeWidget;
+                if (isLogged) {
+                  homeWidget = CarListScreen();
+                } else if (isFirstTime) {
+                  homeWidget = OnboardingPage();
                 } else {
-                  final bool isLogged = snapshot.data == 'true';
-                  return MaterialApp(
+                  homeWidget = LoginPage();
+                }
+
+                return BlocProvider(
+                  create: (context) => getIt<CarBloc>(),
+                  child: MaterialApp(
                     title: 'Flutter Demo',
                     theme: ThemeData(
                       colorScheme: ColorScheme.fromSeed(
@@ -78,24 +84,17 @@ class _MyAppState extends State<MyApp> {
                       ),
                       useMaterial3: true,
                     ),
-                    home: isLogged ? CarListScreen() : OnboardingPage(),
-                  );
-                }
-              },
-            ),
+                    home: homeWidget,
+                  ),
+                );
+              }
+            },
           );
         }
       },
     );
   }
-
-  Future<List<String?>> _loadUserData() async {
-    final typeOfUser = await _prefs.getSharedPref('typeOfUser');
-    final username = await _prefs.getSharedPref('username');
-    return [typeOfUser, username];
-  }
 }
-
 class AuthenticationPage extends StatefulWidget {
   @override
   _AuthenticationPageState createState() => _AuthenticationPageState();

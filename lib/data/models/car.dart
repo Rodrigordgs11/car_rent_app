@@ -16,4 +16,14 @@ class Car{
       seller: doc['seller'],
     );
   }
+
+  Map<String, dynamic> toMap(){
+    return {
+      'model': model,
+      'distance': distance,
+      'fuelCapacity': fuelCapacity,
+      'pricePerHour': pricePerHour,
+      'seller': seller,
+    };
+  }
 }

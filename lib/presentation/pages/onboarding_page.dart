@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/presentation/pages/auth/login_page.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -6,6 +7,8 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Prefs _prefs = Prefs();
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -42,6 +45,7 @@ class OnboardingPage extends StatelessWidget {
                     height: 54,
                     child: ElevatedButton(
                       onPressed: () { 
+                        _prefs.setSharedPref('isFirstTime', 'false');
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
                       }, 
                       style: ElevatedButton.styleFrom(
