@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/data/models/Car.dart';
 import 'package:namer_app/data/services/firebase_car_service.dart';
 import 'package:namer_app/data/sharedPreferences/prefs.dart';
+import 'package:namer_app/injection_container.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
 
 class AddCarPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AddCarPageState extends State<AddCarPage> {
   final TextEditingController _fuelCapacityController = TextEditingController();
   final TextEditingController _pricePerHourController = TextEditingController();
   final TextEditingController _sellerController = TextEditingController();
-  final FirebaseCarService _carService = FirebaseCarService();
+  FirebaseCarService _carService = getIt<FirebaseCarService>();
   final Prefs _prefs = Prefs();
 
   @override

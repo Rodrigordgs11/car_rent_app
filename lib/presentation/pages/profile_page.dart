@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     const SizedBox(height: 10),
                     const CircleAvatar(
-                      radius: 50,
+                      radius: 60,
                       backgroundImage: AssetImage('assets/user.png'),
                     ),
                     const SizedBox(height: 8),

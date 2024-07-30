@@ -6,6 +6,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:namer_app/data/sharedPreferences/prefs.dart';
 import 'package:namer_app/injection_container.dart';
 import 'package:namer_app/presentation/bloc/car_bloc.dart';
+import 'package:namer_app/presentation/bloc/statistic_bloc.dart';
 import 'package:namer_app/presentation/pages/car_list_screen.dart';
 import 'package:namer_app/presentation/pages/onboarding_page.dart';
 import 'package:namer_app/presentation/pages/auth/login_page.dart';
@@ -73,8 +74,15 @@ class _MyAppState extends State<MyApp> {
                   homeWidget = LoginPage();
                 }
 
-                return BlocProvider(
-                  create: (context) => getIt<CarBloc>(),
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<CarBloc>(
+                      create: (context) => getIt<CarBloc>(),
+                    ),
+                    BlocProvider<StatisticsBloc>(
+                      create: (context) => getIt<StatisticsBloc>(),
+                    ),
+                  ],
                   child: MaterialApp(
                     title: 'Flutter Demo',
                     theme: ThemeData(
