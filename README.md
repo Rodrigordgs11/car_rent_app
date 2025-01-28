@@ -17,7 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Future Features
 
-- Login Otp
-- Rent a car (Locale where car is sell) with localization
-- ao clicar no ponto onde esta o carro redirecionar para os mapas do iphone. 
-- upload photos
+- OTP-based login for enhanced security.  
+- Car rental feature with location-specific options (based on where the car is available).  
+- Redirect users to Apple Maps when they tap on the location of the car.  
+- Enable users to upload photos. 
